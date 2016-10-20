@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>index</title>
+<style>
+  table#chat-record { width: 100%; }
+  table#chat-record tbody tr td:nth-child(1) { text-align: right; }
+/*   table#chat-record, td, th {border-style:solid}
+  table#chat-record, td, th {border-bottom-style:outset} */
+  form#chat-form input, form#chat-form textarea {
+    width: 90%;
+  }
+  form#chat-form button {
+    margin-left: 48px;
+  }
+</style>
+</head>
+<body>
+<fieldset>
+  <legend>聊天记录</legend>
+  <table id="chat-record">
+    <thead>
+      <tr>
+        <th style="width: 10%;">昵称</th>
+        <th style="width: 90%;">内容</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</fieldset>
+<br>
+<br>
+<form id="chat-form" action="#">
+  <fieldset>
+    <legend>聊天信息</legend>
+    昵称：<input name="nickname">
+    <br>
+    <br>
+    内容：<textarea rows="10" name="content"></textarea>
+    <br>
+    <br>
+  <button type="submit">发送</button>
+  </fieldset>
+</form>
+<script>
+  (function(){
+	  if (window.MozWebSocket) {
+		  window.WebSocket = window.MozWebSocket;
+	  }
+	  var websocket = new window.WebSocket('ws://' + location.host + '/socketjs');
+	  websocket.onopen = function(event) {
+		  console.info('opened');
+	  };
+	  websocket.onmessage = function(event) {
+		  console.info('message!');
+		  var message = JSON.parse(event.data);
+		  var nickname = message.nickname;
+		  var content = message.content;
+		  var html = [
+		              '<tr>',
+	                  '<td>',
+	                    nickname,
+	                  '</td>',
+	                  '<td>',
+	                    content,
+	                  '</td>',
+		              '</tr>'
+		              ].join('');
+		  var $recordList = document.getElementById('chat-record').querySelector('tbody');
+		  $recordList.innerHTML = $recordList.innerHTML + html;
+	  };
+	  websocket.onclose = function(event) {
+		  console.info('closed!');
+	  };
+	  websocket.onerror = function(event) {
+		  console.info('error!');
+	  };
+    
+    // -----------------------------------------------
+    function sendMessage(json) {
+      websocket.send(JSON.stringify(json));
+    }
+    
+    
+    // -----------------------------------------------
+    var $chatForm = document.getElementById('chat-form');
+    $chatForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      var nickname = document.querySelector('input[name="nickname"]').value;
+      var content = document.querySelector('textarea[name="content"]').value;
+      sendMessage({nickname: nickname, content: content});
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+<title>陌生人聊天室</title>
+<style>
+  input, textarea {
+    width: 500px;
+  }
+  #face-box{
+    width:500px;
+    height:1px;
+    border: 0;
+    position: relative;
+  }
+  .face-container {
+    width: 500px;
+    position: absolute;
+    left: 50px;
+    bottom: 0px;
+    border: 1px solid #666;
+    border-radius: 10px;
+    background-color: #eee;
+    box-shadow: 3px 3px 3px #666;
+  }
+  .face-container img{
+    cursor: pointer;
+  }
+  .toolbar-info{
+    width: 24px;
+    height: 24px;
+    background-color: #ccc;
+    border: 1px solid #666;
+    margin-left: 48px;
+    cursor: pointer;
+  }
+  #face-img{
+    display: block;
+  }
+  .face-container{
+
+  }
+  .init-hide{
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<b>陌生人聊天室</b>
+<hr>
+<div style="height:500px;width:100%;border:block;overflow:auto" id="msgDiv">
+</div>
+<form action="" id="send_form">
+昵称：<input type="text" id="nickname">
+<br>
+<div id="face-box">
+    <div class="face-container init-hide">
+      <!-- <ul>
+        <li></li>
+      </ul> -->
+    </div>
+</div>
+<!-- <input type="button" id="face-img" class="btn" title="点击出来表情" value="表情" /> -->
+<div class="toolbar-container">
+  <div class="toolbar-info">
+     <img id="face-img" src="https://cdnjs.xueliang.org/chat/smile.png" />
+  </div>
+   
+</div>
+
+内容：<textarea id="content" rows="5"></textarea>
+<button>发送</button>
+</form>
+<script src="https://cdnjs.xueliang.org/ajax/libs/jquery/3.0.0/jquery.js"></script>
+<script src="https://cdnjs.xueliang.org/chat/face.js"></script>
+<script type="text/javascript">
+(function() {
+  if (window.MozWebSocket) {
+	  window.WebSocket = window.MozWebSocket;
+  }
+  if(!window.WebSocket) {
+    $('body').html('<h1>Get a new Web Browser!</h1>' 
+        + '<p>Your browser does not support WebSockets. ' 
+        + 'This example will not work properly.<br>' 
+        + 'Please use a Web Browser with WebSockets support (WebKit or Google Chrome).</p>');
+    return;
+  }
+  var websocket = new window.WebSocket('ws://' + location.host + '/socketjs');
+  websocket.onopen = function(event) {
+	  console.info('opened');
+	  console.info(new Date().getTime());
+  };
+  websocket.onmessage = function(event) {
+	  console.info('message!');
+    var message = JSON.parse(event.data);
+    onMessageArrived(message);
+  };
+  websocket.onclose = function(event) {
+    console.info('closed!');
+    console.info(new Date().getTime());
+  };
+  websocket.onerror = function(event) {
+    console.info('error!');
+  };
+  var $faceImgContainer = $("#face-box .face-container");
+  $("#send_form").find("textarea").each(function(){
+    $(this).on("keydown",function(){
+      var e = window.event || arguments.callee.caller.arguments[0];
+      if (e && e.keyCode == 13 ) {
+        $('#send_form').submit();
+                          return false;
+      }
+    });
+  })
+
+  $('#send_form').submit(function() {
+    var nickname = $('#nickname').val();
+    var content = $('#content').val();
+    var message = JSON.stringify({nickname:nickname, content:content});
+    websocket.send(message);
+    $("#content").val("");
+    return false;
+  });
+  function onMessageArrived(message) {
+    var html = $('<div></div>').text(`[${message.nickname}]: ${message.content}`).html();
+    var faceImgList = face.data.usual.norm;
+    for(var faceImg of faceImgList){
+      var pattern = faceImg.value.replace('[', '\\[').replace(']', '\\]');
+      var regexp = new RegExp(pattern, 'gi');
+      html = html.replace(regexp, '<img src="' + faceImg.icon + '">');
+    }
+    var $msg = $('<div></div>').html(html);
+    $('#msgDiv').append($msg);
+    $('#msgDiv').append('<br>');
+    $("#msgDiv").scrollTop($("#msgDiv")[0].scrollHeight);
+  };
+  // 请求图片
+  function initFaceImgList(){
+      var faceImgList = face.data.usual.norm;
+      for(var faceImg of faceImgList){
+        var domFaceImg = "<img src='" + faceImg.icon +"' title='" + faceImg.value + "' data-value='" + faceImg.value + "'' />";
+        $faceImgContainer.append(domFaceImg);
+      }
+  };
+  initFaceImgList();
+  $faceImgContainer.find("img").on('click',function(){
+    var $content = $("#content");
+    var content = $content.val();
+    var $that = $(this);
+    $content.val(content + $that.data("value")).focus();
+  });
+  $(document).on("click", function(event){
+    if ($(event.target).is('#face-img')) {
+      $faceImgContainer.toggle();      
+      return;
+    }
+    if ($(event.target).parent().is('#face-box .face-container')) {
+      return;
+    }
+    $faceImgContainer.hide();
+  })
+})();
+</script>
+</body>
+</html>
