@@ -5,4 +5,6 @@
 
 # Usage
 
+```
 $ gradle appRun
+```
