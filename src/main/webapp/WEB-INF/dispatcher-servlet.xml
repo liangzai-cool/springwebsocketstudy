@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/mvc 
     http://www.springframework.org/schema/mvc/spring-mvc.xsd" default-init-method="init">
   
-  <context:component-scan base-package="org.xueliang.springactivemqstudy"/>
+  <context:component-scan base-package="org.xueliang.springwebsocketstudy"/>
   <mvc:annotation-driven />
   <mvc:view-controller path="/" view-name="index.html"/>
 </beans>

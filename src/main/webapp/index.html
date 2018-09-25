@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
-<title>陌生人聊天室</title>
+<title>聊天室</title>
 <style>
   input, textarea {
     width: 500px;
@@ -49,7 +49,7 @@
 </head>
 <body>
 
-<b>陌生人聊天室</b>
+<b>聊天室</b>
 <hr>
 <div style="height:500px;width:100%;border:block;overflow:auto" id="msgDiv">
 </div>
@@ -88,7 +88,7 @@
         + 'Please use a Web Browser with WebSockets support (WebKit or Google Chrome).</p>');
     return;
   }
-  var websocket = new window.WebSocket('ws://' + location.host + '/socketjs');
+  var websocket = new window.WebSocket('ws://' + location.host + location.pathname + 'socketjs');
   websocket.onopen = function(event) {
 	  console.info('opened');
 	  console.info(new Date().getTime());

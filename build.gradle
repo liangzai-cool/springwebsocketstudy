@@ -9,7 +9,7 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'war'
 apply plugin: 'org.akhikhl.gretty'
 
@@ -28,7 +28,7 @@ repositories {
 }
 
 gretty {
-  port = 8081
+  httpPort = 8081
   servletContainer = 'jetty9'
   // ... many more properties
 }
@@ -58,7 +58,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "org.akhikhl.gretty:gretty:1.4.0"
+    classpath "org.akhikhl.gretty:gretty:+"
   }
 }
 
