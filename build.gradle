@@ -12,6 +12,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'war'
 apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'maven'
 
 compileJava {
   sourceCompatibility = 1.8
@@ -26,6 +27,10 @@ repositories {
     mavenCentral()
     jcenter()
 }
+
+group = 'org.xueliang'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = 1.8
 
 gretty {
   httpPort = 8081
@@ -67,11 +72,25 @@ tasks.withType(JavaCompile) {
 }
 
 // 发布到jetty
-task deploy() {
-  copy {
-    from ('build/libs') {
-      include('*.war')
+//task deploy() {
+//  copy {
+//    from ('build/libs') {
+//      include('*.war')
+//    }
+//    into('D:\\ProgramFiles\\jetty\\webapps')
+//  }
+//}
+task writeNewPom << {
+  pom {
+    project {
+      inceptionYear '2008'
+      licenses {
+        license {
+          name 'The Apache Software License, Version 2.0'
+          url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          distribution 'repo'
+        }
+      }
     }
-    into('D:\\ProgramFiles\\jetty\\webapps')
-  }
+  }.writeTo("$buildDir/pom.xml")
 }

@@ -66,7 +66,7 @@
 <!-- <input type="button" id="face-img" class="btn" title="点击出来表情" value="表情" /> -->
 <div class="toolbar-container">
   <div class="toolbar-info">
-     <img id="face-img" src="https://cdnjs.xueliang.org/chat/smile.png" />
+     <img id="face-img" src="http://cdnjs.xueliang.org/chat/smile.png" />
   </div>
    
 </div>
@@ -74,8 +74,8 @@
 内容：<textarea id="content" rows="5"></textarea>
 <button>发送</button>
 </form>
-<script src="https://cdnjs.xueliang.org/ajax/libs/jquery/3.0.0/jquery.js"></script>
-<script src="https://cdnjs.xueliang.org/chat/face.js"></script>
+<script src="http://cdnjs.xueliang.org/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script src="http://cdnjs.xueliang.org/chat/face.js"></script>
 <script type="text/javascript">
 (function() {
   if (window.MozWebSocket) {
@@ -88,7 +88,7 @@
         + 'Please use a Web Browser with WebSockets support (WebKit or Google Chrome).</p>');
     return;
   }
-  var websocket = new window.WebSocket('ws://' + location.host + location.pathname + 'socketjs');
+  var websocket = new window.WebSocket('ws://' + location.host + '/socketjs');
   websocket.onopen = function(event) {
 	  console.info('opened');
 	  console.info(new Date().getTime());
